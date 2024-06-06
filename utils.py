@@ -1,7 +1,7 @@
 import os
 import os.path as op
+import json
 import tensorflow as tf
-
 
 def _tf_device_configuration(tpu_specs):
   """Configure TensorFlow to use TPUs or GPUs."""
@@ -10,7 +10,7 @@ def _tf_device_configuration(tpu_specs):
   try: # detect TPUs
     tf.keras.mixed_precision.set_global_policy("mixed_bfloat16")
     resolver = tf.distribute.cluster_resolver.TPUClusterResolver(
-      tpu     = tpu_specs["tpu"], 
+      tpu     = tpu_specs["tpu"],
       zone    = tpu_specs["zone"],
       project = tpu_specs["project"]
     )
@@ -24,18 +24,18 @@ def _tf_device_configuration(tpu_specs):
   return strategy.scope()
 
 
-def _define_paths(dataset_root, job_name, dataset_name):   
+def _define_paths(dataset_root, job_name, dataset_name):
   """Define Google Cloud Storage paths for job artifacts."""
   # Define Google Cloud Storage Paths
   root_jobname   = f"{dataset_root}/jobs/{job_name}"
   dirs_dict = {
-    "data": f"{dataset_root}/tfrec/",        
-    "tb":   op.join(root_jobname, "logs"), 
-    "ckpt": op.join(root_jobname, "checkpoints"), 
+    "data": f"{dataset_root}/tfrec/",
+    "tb":   op.join(root_jobname, "logs"),
+    "ckpt": op.join(root_jobname, "checkpoints"),
     "csv":  op.join(root_jobname, f"{job_name}.csv"),
     "save": op.join(root_jobname, "model")
   }
-  return dirs_dict 
+  return dirs_dict
 
 
 def _define_callbacks(dirs_dict):
@@ -45,7 +45,7 @@ def _define_callbacks(dirs_dict):
   tensorboard = tf.keras.callbacks.TensorBoard(
     log_dir = dirs_dict["tb"] # log file directory
   )
-  
+
   # Save model/model weights at checkpoint (end of each epoch)
   ckpt_fname = "epoch-{epoch:03d}_vloss-{val_loss:.2f}" # checkpoint file pattern
   model_ckpt = tf.keras.callbacks.ModelCheckpoint(
@@ -60,14 +60,14 @@ def _define_callbacks(dirs_dict):
     filename = dirs_dict["csv"], # csv filename
     append   = True              # append to existing csv
   )
-  
+
   # Stop training when a monitored metric has stopped improving
   early_stop = tf.keras.callbacks.EarlyStopping(
     monitor   = "val_loss", # monitored metric
     min_delta = 0.001,      # min change qualifies as improvement
     patience  = 20          # n_epochs threshold = no improvement
   )
-  
+
   # Reduce learning rate when monitored metric has stopped improving
   reduce_lr = tf.keras.callbacks.ReduceLROnPlateau(
     monitor  = "val_loss", # monitored metric
@@ -75,6 +75,6 @@ def _define_callbacks(dirs_dict):
     patience = 2,          # n_epochs threshold = no improvement
     verbose  = 1           # update message
   )
-  
+
   # Return callbacks in order of execution priority
   return [tensorboard, model_ckpt, csv_logger, early_stop, reduce_lr]
