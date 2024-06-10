@@ -243,7 +243,7 @@ if __name__ == "__main__":
     image_model     = args.image_model,
     loss_function   = args.loss_function,
     loss_layer      = args.loss_layer,
-    gcs_bucket      = args.dataset_root,
+    dataset_root    = args.dataset_root,
     dataset_name    = args.dataset_name,
     job_name        = args.job_name,
     batch_size      = args.batch_size,
