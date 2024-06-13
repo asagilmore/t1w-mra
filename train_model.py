@@ -159,13 +159,13 @@ def main(image_model, loss_function, loss_layer, dataset_root, job_name,
       # Instantiate Model Architecture
       model = image_model(
         batch_size  = batch_size,
-        input_shape = [*image_shape, 3] # rgb
+        input_shape = [*image_shape, 1] # greyscale
       )
 
       # Define Loss Function
       loss = loss_function(
         loss_layer  = loss_layer,
-        input_shape = [*image_shape, 3]
+        input_shape = [*image_shape, 1]
       )
 
       # Compile Model
