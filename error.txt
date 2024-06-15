@@ -1,0 +1,50 @@
+"train_model.py" --image_model "UNet" --loss_function "PercetualLossVGG16" --loss_layer "block3_conv2" --dataset_name "tfrec" --job_name "mri2mra:jun7" --batch_size 128 --image_shape 427 427 --n_train_images 328 --n_valid_images 55 --n_epochs 200
+2024-06-09 22:33:36.889107: I tensorflow/core/platform/cpu_feature_guard.cc:182] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: SSE4.1 SSE4.2 AVX AVX2 AVX512F AVX512_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+
+  Starting Model Training:
+    -> Image Model: UNet
+    -> Loss Function: PercetualLossVGG16
+    -> Loss Layer: block3_conv2
+    -> Google Cloud Storage Bucket: None
+    -> Dataset Name: tfrec
+    -> Job Name: mri2mra:jun7
+    -> Batch Size: 128
+    -> Image Shape: [427, 427]
+    -> Training Volumes: 328
+    -> Validation Volumes: 55
+    -> Epochs: 200
+    -> TPU Specs: {'tpu': None, 'zone': None, 'project': None}
+
+WARNING:tensorflow:Mixed precision compatibility check (mixed_float16): WARNING
+The dtype policy mixed_float16 may run slowly because this machine does not have a GPU. Only Nvidia GPUs with compute capability of at least 7.0 run quickly with mixed_float16.
+If you will use compatible GPU(s) not attached to this host, e.g. by running a multi-worker model, you can ignore this warning. This message will only be logged once
+2024-06-09 22:33:52.260881: I tensorflow/core/common_runtime/process_util.cc:146] Creating new thread pool with default inter op setting: 2. Tune using inter_op_parallelism_threads for best performance.
+WARNING:tensorflow:There are non-GPU devices in `tf.distribute.Strategy`, not using nccl allreduce.
+Traceback (most recent call last):
+  File "/mmfs1/gscratch/scrubbed/asagil/t1w-mra/train_model.py", line 242, in <module>
+    main(
+  File "/mmfs1/gscratch/scrubbed/asagil/t1w-mra/train_model.py", line 128, in main
+    dataset, steps_per_epoch = _read_and_preprocess_dataset(
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mmfs1/gscratch/scrubbed/asagil/t1w-mra/train_model.py", line 82, in _read_and_preprocess_dataset
+    dataset[ds] = _read_tfrecord(
+                  ^^^^^^^^^^^^^^^
+  File "/mmfs1/gscratch/scrubbed/asagil/t1w-mra/train_model.py", line 60, in _read_tfrecord
+    dataset = tf.data.Dataset.list_files(file_pattern, shuffle = True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/gscratch/escience/asagil/miniconda3/envs/mri2mra/lib/python3.11/site-packages/tensorflow/python/data/ops/dataset_ops.py", line 1289, in list_files
+    assert_not_empty = control_flow_ops.Assert(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/gscratch/escience/asagil/miniconda3/envs/mri2mra/lib/python3.11/site-packages/tensorflow/python/util/traceback_utils.py", line 153, in error_handler
+    raise e.with_traceback(filtered_tb) from None
+  File "/gscratch/escience/asagil/miniconda3/envs/mri2mra/lib/python3.11/site-packages/tensorflow/python/ops/control_flow_ops.py", line 156, in Assert
+    raise errors.InvalidArgumentError(
+tensorflow.python.framework.errors_impl.InvalidArgumentError: Expected 'tf.Tensor(False, shape=(), dtype=bool)' to be true. Summarized data: b'No files matched pattern: None/tfrec/train_shard-*.tfrec'
+(mri2mra) [asagil@g3071 t1w-mra]$ exit
+exit
+srun: error: g3071: task 0: Exited with exit code 1
+salloc: Relinquishing job allocation 18883541
+salloc: Job allocation 18883541 has been revoked.
+(base) [asagil@klone-login03 asagil]$ exit
+logout

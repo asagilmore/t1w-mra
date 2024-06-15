@@ -159,7 +159,7 @@ def main(image_model, loss_function, loss_layer, dataset_root, job_name,
       # Instantiate Model Architecture
       model = image_model(
         batch_size  = batch_size,
-        input_shape = [*image_shape, 3] # greyscale
+        input_shape = [*image_shape, 3] # rgb
       )
 
       # Define Loss Function
@@ -174,6 +174,7 @@ def main(image_model, loss_function, loss_layer, dataset_root, job_name,
         loss      = loss,
         metrics   = [ SSIMLoss, tf.keras.metrics.RootMeanSquaredError() ]
       )
+  print(model.summary())
 
   # Define Callbacks
   callbacks = _define_callbacks(dirs_dict)
@@ -227,7 +228,7 @@ if __name__ == "__main__":
     -> Image Model: {args.image_model}
     -> Loss Function: {args.loss_function}
     -> Loss Layer: {args.loss_layer}
-    -> Google Cloud Storage Bucket: {args.dataset_root}
+    -> Dataset Root: {args.dataset_root}
     -> Dataset Name: {args.dataset_name}
     -> Job Name: {args.job_name}
     -> Batch Size: {args.batch_size}
@@ -243,12 +244,12 @@ if __name__ == "__main__":
     image_model     = args.image_model,
     loss_function   = args.loss_function,
     loss_layer      = args.loss_layer,
-    dataset_root    = args.dataset_root,
+    dataset_root      = args.dataset_root,
     dataset_name    = args.dataset_name,
     job_name        = args.job_name,
     batch_size      = args.batch_size,
     image_shape     = args.image_shape,
-    n_train_images  = args.n_train_images,
+    n_train_images  = args.n_train_images,  
     n_valid_images  = args.n_valid_images,
     n_epochs        = args.n_epochs,
     tpu_specs       = args.tpu_specs
